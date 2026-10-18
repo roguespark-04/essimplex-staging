@@ -142,7 +142,7 @@ def seq_diagram(steps, compact):
       </div>'''
 
 # ---------- shared chrome ----------
-def head(title, desc, extra=""):
+def head(title, desc, canon="https://essimplex.com/"):
     return f'''<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
@@ -151,12 +151,12 @@ def head(title, desc, extra=""):
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title}</title>
   <meta name="description" content="{desc}" />
-  <link rel="canonical" href="https://essimplex.com/" />
+  <link rel="canonical" href="{canon}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="ESSIMPLEX" />
   <meta property="og:title" content="{title}" />
   <meta property="og:description" content="{desc}" />
-  <meta property="og:url" content="https://essimplex.com/" />
+  <meta property="og:url" content="{canon}" />
   <meta property="og:image" content="https://essimplex.com/assets/essimplex-og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -503,7 +503,7 @@ def product():
 {close("Ready for a build or pilot?", "Ask about Nody Bot availability, datasheets, or a custom design engagement from ESSIMPLEX.", MAIL_NB).replace("__OTHER_HREF__", "index.html").replace("__OTHER_LABEL__", "ESSIMPLEX home")}  </main>
 
 {FOOTER}'''
-    return head(t, d) + body
+    return head(t, d, "https://essimplex.com/nody-bot.html") + body
 
 def legal(title, meta, intro, sections):
     nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False)]
