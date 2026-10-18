@@ -536,6 +536,26 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
 }
 @supports not (aspect-ratio: 1) { .person__photo { height: 0; padding-top: 125%; } .person__photo--empty svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); } }
 
+
+/* ---------- Home: pillars and teasers ---------- */
+.steps3 { display: grid; gap: 0; }
+.steps3 .prov__item { align-items: start; align-content: start; box-shadow: 0 -1px 0 var(--rule-dark); }
+.steps3 .prov__item:last-child { box-shadow: 0 -1px 0 var(--rule-dark), 0 1px 0 var(--rule-dark); }
+.steps3 .prov__item .reading { color: var(--copper-bright); }
+.steps3 .prov__item p { color: var(--on-dark-2); }
+@media (min-width: 900px) {
+  .steps3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-8); }
+  .steps3 .prov__item, .steps3 .prov__item:last-child { grid-template-columns: 1fr; padding: var(--s-6) 0 0; box-shadow: 0 -2px 0 var(--copper-bright); }
+}
+.section--tight { padding-block: var(--s-16); }
+@media (min-width: 900px) { .section--tight { padding-block: var(--s-20); } }
+.teaser { display: grid; gap: var(--s-6); }
+.teaser__copy { display: grid; gap: var(--s-3); align-content: start; }
+.teaser__kicker { color: var(--copper-ink); }
+.ground-dark .teaser__kicker { color: var(--copper-bright); }
+.teaser__action { display: flex; }
+@media (min-width: 900px) { .teaser { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: var(--s-16); align-items: end; } .teaser__action { justify-content: flex-end; } }
+
 /* ---------- Older browsers without aspect-ratio ---------- */
 @supports not (aspect-ratio: 1) {
   .seq__plot::before { content: ""; display: block; padding-top: 36.11%; }

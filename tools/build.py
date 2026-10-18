@@ -95,11 +95,17 @@ def hero_wires(kind):
     return "".join(parts)
 
 def hero_trace(kind):
-    return f'''<div class="wires wires--{kind}" data-wires role="img" aria-label="Illustration: a bundle of parallel wires running from Nody Bot to your collector, with short pulses of light travelling along the wires.">
+    if kind == "home":
+        label = "Illustration: a bundle of parallel wires running from a field problem to a finished device, with short pulses of light travelling along the wires."
+        legend = "<span>Field problem</span><span>Ready to install</span>"
+    else:
+        label = "Illustration: a bundle of parallel wires running from Nody Bot to your collector, with short pulses of light travelling along the wires."
+        legend = "<span>Nody Bot</span><span>Your collector</span>"
+    return f'''<div class="wires wires--{kind}" data-wires role="img" aria-label="{label}">
         {hero_wires(kind)}
       </div>
       <div class="wrap">
-        <p class="wires-legend reading" aria-hidden="true"><span>Nody Bot</span><span>Your collector</span></p>
+        <p class="wires-legend reading" aria-hidden="true">{legend}</p>
       </div>'''
 
 # Check-in sequence route: one wire, a junction pad per step.
@@ -309,17 +315,23 @@ SEQ_LONG = [
 
 # ---------- pages ----------
 def index():
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("How it works", "#how", False), ("Company", "#company", False), ("About", "about.html", False)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("Company", "#company", False), ("About", "about.html", False)]
     t = "ESSIMPLEX | Custom design and hardware products for industry"
-    d = "ESSIMPLEX designs and builds practical hardware for demanding environments. Our first product is Nody Bot, battery-powered Ethernet phone-home for datacenter construction."
+    d = "ESSIMPLEX designs and builds practical hardware for demanding environments: custom design and hardware products for industry, starting with Nody Bot."
     caps = [
         ("Custom design", "Hardware engineered around a specific field problem, from requirements to a working device."),
         ("Industrial products", "Practical devices built for demanding environments, starting with datacenter construction."),
-        ("Field-ready deployment", "Units are configured on the bench and shipped ready for the install crew."),
         ("Honest specifications", "We publish what the device does. Preliminary parameters are labeled as preliminary."),
     ]
     rows = "".join(f'''
-            <li class="ruled__row"><h3 class="h3">{a}</h3><p>{b}</p></li>''' for a, b in caps)
+          <li class="ruled__row"><h3 class="h3">{a}</h3><p>{b}</p></li>''' for a, b in caps)
+    approach = [
+        ("The field problem", "We start from a specific problem in the field."),
+        ("The device", "Hardware engineered around it, from requirements to a working device."),
+        ("Ready to install", "Units are configured on the bench and shipped ready for the install crew."),
+    ]
+    steps = "".join(f'''
+          <li class="prov__item"><span class="reading" aria-hidden="true">{i}</span><div><h3 class="h3">{a}</h3><p>{c}</p></div></li>''' for i, (a, c) in enumerate(approach, 1))
     body = f'''<body class="page-home">
 {header(nav, MAIL)}
   <main id="main">
@@ -327,71 +339,80 @@ def index():
       <div class="wrap hero__content">
         <div class="hero__copy">
           <h1 class="display" id="hero-heading">Practical hardware for demanding environments.</h1>
-          <p class="hero__descriptor">Custom design and hardware products for industry. Our first product is Nody Bot, battery-powered Ethernet phone-home for datacenter construction.</p>
+          <p class="hero__descriptor">Custom design and hardware products for industry. We take a field problem, design the device that solves it, and ship it ready to install.</p>
           <div class="actions">
-            <a class="btn btn--primary" href="nody-bot.html">Explore Nody Bot {ARROW}</a>
-            <a class="btn btn--ghost" href="{MAIL}">Talk to us</a>
+            <a class="btn btn--primary" href="{MAIL}">Talk to us {ARROW}</a>
+            <a class="btn btn--ghost" href="#capabilities">What we build</a>
           </div>
         </div>
       </div>
       {hero_trace("home")}
     </section>
 
-    <section class="section ground-paper" id="nody-bot" aria-labelledby="nb-heading">
+    <section class="section ground-paper" id="company" aria-labelledby="about-heading">
       <div class="wrap split">
         <div class="split__copy">
-          <h2 class="h2" id="nb-heading">Nody Bot</h2>
-          <p class="lede">Battery-powered Ethernet phone-home for datacenter construction.</p>
-          <p>Hang it on the far end of a cable run. It sleeps for most of the build, wakes on a schedule, and reports in so you know the drop is still alive. No PoE, and nothing left pingable.</p>
-          <div class="actions">
-            <a class="text-link" href="nody-bot.html">Read about Nody Bot {ARROW}</a>
-            <a class="text-link" href="nody-bot.html#specs">View specifications {ARROW}</a>
-          </div>
+          <h2 class="h2" id="about-heading">A focused hardware company for practical industrial products.</h2>
+          <p class="lede">ESSIMPLEX is a hardware company focused on custom design and practical industrial products.</p>
+          <p>We keep claims honest. Nody Bot is our first product, not the company.</p>
         </div>
-        {plate(False, PLATE_ROWS, uid="home-plate")}
+        <dl class="facts">
+          <div><dt class="reading">Company</dt><dd>ESSIMPLEX</dd></div>
+          <div><dt class="reading">Focus</dt><dd>Custom design, industrial hardware</dd></div>
+          <div><dt class="reading">First product</dt><dd><a href="nody-bot.html">Nody Bot</a></dd></div>
+        </dl>
       </div>
     </section>
 
-    <section class="section ground-dark-2" id="how" aria-labelledby="how-heading">
-      <div class="wrap">
-        <div class="section-head section-head--split">
-          <h2 class="h2" id="how-heading">One check-in cycle, repeated for the life of the build.</h2>
-          <div class="split__copy">
-            <p class="lede muted">Built for multi-month cable plant builds, not always-on monitoring.</p>
-            <a class="text-link" href="nody-bot.html#how">See the full sequence {ARROW}</a>
-          </div>
-        </div>
-        {seq_diagram(SEQ_SHORT, True)}
-      </div>
-    </section>
-
-    <section class="section ground-paper" id="capabilities" aria-labelledby="cap-heading">
+    <section class="section ground-paper-2" id="capabilities" aria-labelledby="cap-heading">
       <div class="wrap caps">
         <div class="caps__head">
-          <h2 class="h2" id="cap-heading">From field problem to a device ready to install.</h2>
-          <p class="lede muted">ESSIMPLEX is a hardware company focused on custom design and practical industrial products. We take a field problem, design the device that solves it, and ship it ready to install.</p>
+          <h2 class="h2" id="cap-heading">What we build.</h2>
+          <p class="lede muted">Custom design and hardware products for industry, made for demanding environments.</p>
         </div>
         <ul class="ruled" role="list">{rows}
         </ul>
       </div>
     </section>
 
-    <section class="section ground-paper-2" id="company" aria-labelledby="about-heading">
-      <div class="wrap split">
-        <div class="split__copy">
-          <h2 class="h2" id="about-heading">A focused hardware company for practical industrial products.</h2>
-          <p class="lede">Nody Bot is our first product, built for datacenter construction teams.</p>
-          <p>We keep claims honest. This site describes the product surface: the website and the device. Collector and operations software ships separately. Nody Bot is a product name, not the company.</p>
+    <section class="section ground-dark-2" id="approach" aria-labelledby="approach-heading">
+      <div class="wrap">
+        <div class="section-head section-head--split">
+          <h2 class="h2" id="approach-heading">From field problem to a device ready to install.</h2>
+          <p class="lede muted">One short path, with nothing between the problem and the unit on site.</p>
         </div>
-        <dl class="facts">
-          <div><dt class="reading">Company</dt><dd>ESSIMPLEX</dd></div>
-          <div><dt class="reading">First product</dt><dd><a href="nody-bot.html">Nody Bot</a></dd></div>
-          <div><dt class="reading">Focus</dt><dd>Custom design, industrial hardware</dd></div>
-        </dl>
+        <ol class="steps3" role="list">{steps}
+        </ol>
       </div>
     </section>
 
-{close("Talk to us about your build.", "Interested in Nody Bot for a build, a pilot, or a custom design engagement? Write to us and we will respond by email.", MAIL).replace("__OTHER_HREF__", "nody-bot.html").replace("__OTHER_LABEL__", "Nody Bot product page")}  </main>
+    <section class="section section--tight ground-paper" id="nody-bot" aria-labelledby="nb-heading">
+      <div class="wrap teaser">
+        <div class="teaser__copy">
+          <p class="reading teaser__kicker">Our first product</p>
+          <h2 class="h2" id="nb-heading">Nody Bot</h2>
+          <p class="lede">Battery-powered Ethernet phone-home for datacenter construction.</p>
+        </div>
+        <div class="teaser__action">
+          <a class="btn btn--primary" href="nody-bot.html">Explore Nody Bot {ARROW}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight ground-dark" id="people" aria-labelledby="people-heading">
+      <div class="wrap teaser">
+        <div class="teaser__copy">
+          <p class="reading teaser__kicker">About</p>
+          <h2 class="h2" id="people-heading">The people behind ESSIMPLEX.</h2>
+          <p class="lede on-dark-2 muted">Meet co-founders Frank Wagner and Henry Wagner.</p>
+        </div>
+        <div class="teaser__action">
+          <a class="btn btn--ghost" href="about.html">About ESSIMPLEX {ARROW}</a>
+        </div>
+      </div>
+    </section>
+
+{close("Talk to us about your build.", "Interested in a custom design engagement or in Nody Bot? Write to us and we will respond by email.", MAIL).replace("__OTHER_HREF__", "nody-bot.html").replace("__OTHER_LABEL__", "Nody Bot product page")}  </main>
 
 {FOOTER}'''
     return head(t, d) + body
