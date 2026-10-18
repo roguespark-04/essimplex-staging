@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta name="robots" content="noindex, nofollow">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nody Bot | Battery Ethernet phone-home | ESSIMPLEX</title>
+  <meta name="description" content="Nody Bot by ESSIMPLEX: battery-powered Ethernet check-in device for AI datacenter construction. Wakes about every 15 minutes, reports in, then sleeps. Outbound only; not pingable. Configured over USB." />
+  <link rel="canonical" href="https://essimplex.com/nody-bot.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ESSIMPLEX" />
+  <meta property="og:title" content="Nody Bot | Battery Ethernet phone-home | ESSIMPLEX" />
+  <meta property="og:description" content="Nody Bot by ESSIMPLEX: battery-powered Ethernet check-in device for AI datacenter construction. Wakes about every 15 minutes, reports in, then sleeps. Outbound only; not pingable. Configured over USB." />
+  <meta property="og:url" content="https://essimplex.com/nody-bot.html" />
+  <meta property="og:image" content="https://essimplex.com/assets/essimplex-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ESSIMPLEX logo" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nody Bot | Battery Ethernet phone-home | ESSIMPLEX" />
+  <meta name="twitter:description" content="Nody Bot by ESSIMPLEX: battery-powered Ethernet check-in device for AI datacenter construction. Wakes about every 15 minutes, reports in, then sleeps. Outbound only; not pingable. Configured over USB." />
+  <meta name="twitter:image" content="https://essimplex.com/assets/essimplex-og.png" />
+  <meta name="theme-color" content="#1E1E20" />
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="icon" href="assets/favicon-16.png" type="image/png" sizes="16x16" />
+  <link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180" />
+  <link rel="preload" href="assets/fonts/manrope-var.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
+  <script src="app.js" defer></script>
+</head>
+<body class="page-product">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="ESSIMPLEX home">
+        <img src="assets/essimplex-mark-sm-light.png" width="26" height="33" alt="" />
+        <span class="brand-name">ESSIMPLEX</span>
+      </a>
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+        <span class="nav-toggle__bars" aria-hidden="true"></span><span class="nav-toggle__label">Menu</span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <ul class="nav__list">
+          <li><a href="nody-bot.html" aria-current="page">Nody Bot</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#specs">Specifications</a></li>
+          <li><a href="index.html#about">Company</a></li>
+        </ul>
+        <a class="btn btn--primary btn--sm nav__cta" href="mailto:support@essimplex.com?subject=Nody%20Bot%20inquiry">Contact sales</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero hero--product theme-dark" aria-labelledby="hero-heading">
+      <div class="hero__bg" aria-hidden="true">
+        <div class="hero__grid"></div>
+        <div class="hero__glow"></div>
+        <svg class="hero__lines" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+          <defs>
+            <linearGradient id="pkt" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#F3DDBF" stop-opacity="0"/>
+              <stop offset="0.75" stop-color="#F3DDBF" stop-opacity="0.9"/>
+              <stop offset="1" stop-color="#FFFFFF" stop-opacity="1"/>
+            </linearGradient>
+            <filter id="glow" x="-20%" y="-400%" width="140%" height="900%"><feGaussianBlur stdDeviation="5"/></filter>
+          </defs>
+          <g fill="none">
+            <path class="trace" d="M540 900 V720 L660 600 H1440"/>
+            <path class="trace" d="M556 900 V736 L676 616 H1440"/>
+            <path class="trace trace--main" d="M572 900 V752 L692 632 H1440"/>
+            <path class="trace" d="M588 900 V768 L708 648 H1440"/>
+            <path class="trace" d="M604 900 V784 L724 664 H1440"/>
+            <path class="trace trace--faint" d="M1440 150 H1200 L1080 30 V0"/>
+            <path class="trace trace--faint" d="M1440 166 H1184 L1064 46 V0"/>
+            <path class="trace trace--faint" d="M1440 182 H1168 L1048 62 V0"/>
+            <path class="trace trace--faint" d="M0 812 H300 L388 900"/>
+            <path class="trace trace--faint" d="M0 828 H316 L404 900"/>
+            <path class="trace trace--faint" d="M0 844 H332 L420 900"/>
+            <path class="trace-glow" d="M572 900 V752 L692 632 H1440" filter="url(#glow)"/>
+          </g>
+          <circle class="pad" cx="1012" cy="632" r="5"/>
+          <circle class="pad" cx="1268" cy="632" r="5"/>
+          <g class="packet"><rect x="692" y="630.5" width="150" height="3" rx="1.5" fill="url(#pkt)"/></g>
+        </svg>
+        <div class="hero__shade"></div>
+      </div>
+      <div class="wrap p-hero">
+        <div class="p-hero__copy">
+          <nav class="breadcrumb" aria-label="Breadcrumb" data-hero style="--i:0">
+            <a href="index.html">ESSIMPLEX</a><span aria-hidden="true">/</span><span aria-current="page">Nody Bot</span>
+          </nav>
+          <p class="eyebrow eyebrow--mono" data-hero style="--i:0">NBX-ETH-BAT &middot; Preliminary</p>
+          <h1 class="display" id="hero-heading" data-hero style="--i:1">Nody Bot</h1>
+          <p class="p-hero__motto" data-hero style="--i:2">Not dead yet.</p>
+          <p class="p-hero__tagline" data-hero style="--i:2">Battery Ethernet phone-home for datacenter construction</p>
+          <p class="hero__lede" data-hero style="--i:3">Hang it on the far end of a cable run. It sleeps for most of the build, wakes on a schedule, and reports in so you know the drop is still alive. No PoE, and nothing left pingable.</p>
+          <div class="actions" data-hero style="--i:4">
+            <a class="btn btn--primary btn--lg" href="mailto:support@essimplex.com?subject=Nody%20Bot%20inquiry">Contact sales <svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="btn btn--ghost btn--lg" href="#specs">View specifications</a>
+          </div>
+        </div>
+        <aside class="stack" aria-labelledby="stack-heading" data-hero style="--i:4">
+          <div class="stack__head">
+            <h2 id="stack-heading">At a glance</h2>
+            <span class="live" aria-hidden="true"><span class="live__dot"></span>Heartbeat</span>
+          </div>
+          <dl class="stack__rows">
+            <div><dt>Connection</dt><dd>Wired Ethernet</dd></div>
+            <div><dt>Power</dt><dd>Battery</dd></div>
+            <div><dt>Setup</dt><dd>USB</dd></div>
+            <div><dt>Check-in</dt><dd>~15 min</dd></div>
+          </dl>
+          <p class="stack__foot">Outbound only &middot; not pingable</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="stats theme-dark" aria-labelledby="stats-heading">
+      <div class="wrap">
+        <h2 class="visually-hidden" id="stats-heading">Nody Bot at a glance</h2>
+        <dl class="stats__grid">
+          <div class="stat" data-reveal>
+            <dt class="stat__label">Check-in interval</dt>
+            <dd class="stat__value"><span class="stat__tilde">~</span><span data-count="15">15</span><span class="stat__unit">min</span></dd>
+            <dd class="stat__note">Wakes on a timer; interval is configurable</dd>
+          </div>
+          <div class="stat" data-reveal style="--i:1">
+            <dt class="stat__label">Connection</dt>
+            <dd class="stat__value">Ethernet</dd>
+            <dd class="stat__note">Wired, no Wi-Fi dependency</dd>
+          </div>
+          <div class="stat" data-reveal style="--i:2">
+            <dt class="stat__label">Power</dt>
+            <dd class="stat__value">Battery</dd>
+            <dd class="stat__note">Not PoE; sleeps between check-ins</dd>
+          </div>
+          <div class="stat" data-reveal style="--i:3">
+            <dt class="stat__label">Provisioning</dt>
+            <dd class="stat__value">USB</dd>
+            <dd class="stat__note">Bench setup before it ships</dd>
+          </div>
+        </dl>
+        <p class="stats__foot">Preliminary specifications. Subject to change before commercial availability.</p>
+      </div>
+    </section>
+
+    <section class="section theme-dark how" id="how" aria-labelledby="how-heading">
+      <div class="wrap how__grid">
+        <div class="how__aside">
+          <div class="how__sticky">
+            <div class="how__head">
+              <p class="eyebrow" data-reveal>How it works</p>
+              <h2 class="h2" id="how-heading" data-reveal style="--i:1">Sleep. Wake. Prove it. Sleep.</h2>
+              <p class="lede" data-reveal style="--i:2">Built for multi-month cable plant builds, not always-on monitoring. One cycle, repeated for the life of the build.</p>
+            </div>
+            <div class="seq" aria-hidden="true">
+              <div class="seq__track"><span class="seq__fill"></span></div>
+              <ol class="seq__nodes">
+                <li class="seq__node"><span class="seq__dot"></span><span class="seq__name">Wake</span></li>
+                <li class="seq__node"><span class="seq__dot"></span><span class="seq__name">Connect</span></li>
+                <li class="seq__node"><span class="seq__dot"></span><span class="seq__name">Report</span></li>
+                <li class="seq__node"><span class="seq__dot"></span><span class="seq__name">Confirm</span></li>
+                <li class="seq__node"><span class="seq__dot"></span><span class="seq__name">Sleep</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <ol class="how__steps" role="list">
+          <li class="step" data-step="0">
+            <p class="step__kicker">Step 1 of 5</p>
+            <h3 class="h3">Wake</h3>
+            <p>A timer fires about every 15 minutes. Between wakes it sleeps with nothing listening, so the battery lasts the build schedule.</p>
+            <p class="step__meta"><span>~15 min, configurable</span></p>
+          </li>
+          <li class="step" data-step="1">
+            <p class="step__kicker">Step 2 of 5</p>
+            <h3 class="h3">Connect</h3>
+            <p>Wired Ethernet comes up and the unit gets an address on the plant network.</p>
+            <p class="step__meta"><span>wired Ethernet</span><span>no Wi-Fi dependency</span></p>
+          </li>
+          <li class="step" data-step="2">
+            <p class="step__kicker">Step 3 of 5</p>
+            <h3 class="h3">Report</h3>
+            <p>The unit sends a heartbeat to your collector so you know the drop is still alive.</p>
+            <p class="step__meta"><span>outbound only</span></p>
+          </li>
+          <li class="step" data-step="3">
+            <p class="step__kicker">Step 4 of 5</p>
+            <h3 class="h3">Confirm</h3>
+            <p>The unit waits for your collector to confirm the check-in, retrying if needed.</p>
+            <p class="step__meta"><span>confirmed check-in</span></p>
+          </li>
+          <li class="step" data-step="4">
+            <p class="step__kicker">Step 5 of 5</p>
+            <h3 class="h3">Sleep</h3>
+            <p>It returns to sleep until the next wake. Nothing listens in between, so it is never pingable.</p>
+            <p class="step__meta"><span>sleep</span></p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section theme-light" id="why" aria-labelledby="why-heading">
+      <div class="wrap">
+        <div class="section-head section-head--split">
+          <div>
+            <p class="eyebrow" data-reveal>Why Nody Bot</p>
+            <h2 class="h2" id="why-heading" data-reveal style="--i:1">Proof it&rsquo;s alive when the plant isn&rsquo;t finished.</h2>
+          </div>
+          <p class="lede" data-reveal style="--i:2">During AI and HPC hall construction, cable drops sit unfinished for months. You need to know they still work, without leaving something pingable on an incomplete network and without PoE at the far end.</p>
+        </div>
+        <ul class="cards cards--3" role="list">
+          <li class="card card--flat" data-reveal style="--i:0">
+            <span class="card__icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h3 class="h3">Not pingable by design</h3>
+            <p>Asleep between wakes. No ICMP, and no open ports waiting for scans on an unfinished plant.</p>
+          </li>
+          <li class="card card--flat" data-reveal style="--i:1">
+            <span class="card__icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/><path d="M6 10v4M9.5 10v4M13 10v4"/></svg></span>
+            <h3 class="h3">Months on battery</h3>
+            <p>Battery power, not PoE, so the far end works before power distribution is ready.</p>
+          </li>
+          <li class="card card--flat" data-reveal style="--i:2">
+            <span class="card__icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="7" rx="1.5"/><rect x="4" y="13" width="16" height="7" rx="1.5"/><path d="M8 7.5h.01M8 16.5h.01M12 7.5h4M12 16.5h4"/></svg></span>
+            <h3 class="h3">Your collector</h3>
+            <p>Check-ins report to your collector. This site is marketing; collector and operations software ships separately.</p>
+          </li>
+        </ul>
+        <div class="audience" data-reveal>
+          <h3 class="h3">Who it&rsquo;s for</h3>
+          <ul role="list">
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Datacenter construction and cable verification crews</span></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Commissioning teams that need live confirmation across hundreds of drops</span></li>
+            <li><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Integrators building AI and HPC halls on multi-month plant schedules</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section theme-white specs" id="specs" aria-labelledby="specs-heading">
+      <div class="wrap specs__grid">
+        <div class="specs__meta">
+          <div class="specs__sticky">
+            <p class="eyebrow" data-reveal>Specifications</p>
+            <h2 class="h2" id="specs-heading" data-reveal style="--i:1">Datasheet</h2>
+            <p data-reveal style="--i:2">Preliminary product parameters for planning and RFQ. Specifications may change before commercial availability.</p>
+            <dl class="tiles tiles--stack" data-reveal style="--i:3">
+              <div><dt>SKU</dt><dd>NBX-ETH-BAT</dd></div>
+              <div><dt>Status</dt><dd>Preliminary</dd></div>
+              <div><dt>Category</dt><dd>Network infrastructure hardware</dd></div>
+            </dl>
+            <a class="btn btn--copper" href="mailto:support@essimplex.com?subject=Nody%20Bot%20datasheet%20request" data-reveal style="--i:4">Request datasheet <svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+        <div class="specs__tables">
+          <div class="spec-group" data-reveal>
+            <h3 class="h3" id="spec-hw">Product</h3>
+            <table class="spec" aria-labelledby="spec-hw"><tbody>
+              <tr><th scope="row">Product / SKU</th><td>Nody Bot, NBX-ETH-BAT</td></tr>
+              <tr><th scope="row">Connection</th><td>Wired Ethernet (no Wi-Fi dependency in the plant)</td></tr>
+              <tr><th scope="row">Power</th><td>Battery (not PoE)</td></tr>
+              <tr><th scope="row">Setup</th><td>Configured over USB (no mobile apps)</td></tr>
+            </tbody></table>
+          </div>
+          <div class="spec-group" data-reveal>
+            <h3 class="h3" id="spec-net">Behaviour</h3>
+            <table class="spec" aria-labelledby="spec-net"><tbody>
+              <tr><th scope="row">Wake interval</th><td>~15 minutes (configurable)</td></tr>
+              <tr><th scope="row">Reachability</th><td>Outbound check-in only; not pingable</td></tr>
+              <tr><th scope="row">Deployment</th><td>Far end of cable runs during datacenter construction</td></tr>
+              <tr><th scope="row">Operating intent</th><td>Multi-month build schedules; sleeps between check-ins</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section theme-dark prov" id="provisioning" aria-labelledby="prov-heading">
+      <div class="wrap">
+        <div class="section-head section-head--split">
+          <div>
+            <p class="eyebrow" data-reveal>Provisioning</p>
+            <h2 class="h2" id="prov-heading" data-reveal style="--i:1">Configured over USB.</h2>
+          </div>
+          <p class="lede" data-reveal style="--i:2">Units are set up on the bench before they reach the plant. The product surface is this website and the hardware device.</p>
+        </div>
+        <ol class="prov__list" role="list">
+          <li class="prov__item" data-reveal><span class="prov__k">Bench</span><p>Set the collector address, unit identity and wake interval</p></li>
+          <li class="prov__item" data-reveal style="--i:1"><span class="prov__k">Verify</span><p>Verify the battery and Ethernet connection on the bench</p></li>
+          <li class="prov__item" data-reveal style="--i:2"><span class="prov__k">Ship</span><p>Ship configured modules to the far-end install crew</p></li>
+        </ol>
+        <div class="prov__ships" data-reveal>
+          <p class="prov__ships-k">What ships</p>
+          <p>The Nody Bot unit and its USB setup path. The collector backend is separate.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band" id="contact" aria-labelledby="contact-heading">
+      <div class="cta-band__lines" aria-hidden="true"></div>
+      <div class="wrap cta-band__inner">
+        <div class="cta-band__copy">
+          <p class="eyebrow eyebrow--light" data-reveal>Contact</p>
+          <h2 class="h2" id="contact-heading" data-reveal style="--i:1">Ready for a build or pilot?</h2>
+          <p class="lede" data-reveal style="--i:2">Ask about Nody Bot availability, datasheets, or a custom design engagement from ESSIMPLEX.</p>
+        </div>
+        <div class="cta-band__action" data-reveal style="--i:3">
+          <a class="cta-band__mail" href="mailto:support@essimplex.com?subject=Nody%20Bot%20inquiry">support@essimplex.com</a>
+          <div class="actions">
+            <a class="btn btn--dark" href="mailto:support@essimplex.com?subject=Nody%20Bot%20inquiry">Email sales <svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="btn btn--ghost" href="index.html">ESSIMPLEX home</a>
+          </div>
+          <p class="cta-band__note">The address above is a placeholder until the production inbox is set up. You can also open a note on <a href="https://github.com/roguespark-04/essimplex">GitHub</a>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer theme-dark">
+    <div class="wrap">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a class="brand" href="index.html" aria-label="ESSIMPLEX home">
+            <img src="assets/essimplex-mark-sm-light.png" width="30" height="38" alt="" loading="lazy" />
+            <span class="brand-name">ESSIMPLEX</span>
+          </a>
+          <p>Custom design and hardware products for industry. Nody Bot is our first product.</p>
+          <a class="footer__mail" href="mailto:support@essimplex.com?subject=ESSIMPLEX%20inquiry">support@essimplex.com</a>
+        </div>
+        <nav class="footer__col" aria-label="Products">
+          <h2>Products</h2>
+          <ul>
+            <li><a href="nody-bot.html">Nody Bot</a></li>
+            <li><a href="nody-bot.html#how">How it works</a></li>
+            <li><a href="nody-bot.html#specs">Specifications</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Company">
+          <h2>Company</h2>
+          <ul>
+            <li><a href="index.html#capabilities">Capabilities</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="https://github.com/roguespark-04/essimplex">GitHub</a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Legal">
+          <h2>Legal</h2>
+          <ul>
+            <li><a href="privacy.html">Privacy policy</a></li>
+            <li><a href="terms.html">Terms of use</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2026 ESSIMPLEX. All rights reserved.</p>
+        <a href="#main" class="footer__top-link">Back to top <svg class="ico-arrow ico-arrow--up" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
