@@ -59,9 +59,9 @@ def bundle(pts, n, gap, main_cls="w-main", other_cls="w-line", pulses=True, po=1
 def pad(x, y, r=5):
     return f'<circle class="w-pad" cx="{x}" cy="{y}" r="{r}"/>'
 
-def wires_svg(cls, vb, par, body):
+def wires_svg(cls, vb, par, body, y0=0):
     w, h = vb
-    return f'<svg class="{cls}" viewBox="0 0 {w} {h}" preserveAspectRatio="{par}" aria-hidden="true" focusable="false">{body}</svg>'
+    return f'<svg class="{cls}" viewBox="0 {y0} {w} {h}" preserveAspectRatio="{par}" aria-hidden="true" focusable="false">{body}</svg>'
 
 # Hero wire routes. Each variant is drawn for its own size and scaled uniformly (never stretched),
 # so the 45-degree bends stay true on every screen. The hero main wire carries a node at each end:
@@ -72,7 +72,7 @@ def hero_wires(kind):
         # phone: below the text, short route (box ratio = viewBox ratio, so the whole width is always visible)
         m = [(-60, 205), (120, 205), (210, 115), (470, 115)]
         l, p, _ = bundle(m, 5, 9, salt=0)
-        parts.append(wires_svg("w-narrow", (400, 240), "xMidYMid slice", l + p + pad(24, 205, 5) + pad(376, 115, 5)))
+        parts.append(wires_svg("w-narrow", (400, 152), "xMidYMid slice", l + p + pad(24, 205, 5) + pad(376, 115, 5), y0=88))
         # tablet and small laptop: below the text, full-width route
         m = [(-100, 185), (430, 185), (540, 75), (1300, 75)]
         l, p, _ = bundle(m, 5, 12, salt=1)
@@ -315,7 +315,7 @@ SEQ_LONG = [
 
 # ---------- pages ----------
 def index():
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("Company", "#company", False), ("About", "about.html", False)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("About", "about.html", False)]
     t = "ESSIMPLEX | Custom design and hardware products for industry"
     d = "ESSIMPLEX designs and builds practical hardware for demanding environments: custom design and hardware products for industry, starting with Nody Bot."
     caps = [
@@ -349,7 +349,26 @@ def index():
       {hero_trace("home")}
     </section>
 
-    <section class="section ground-paper" id="company" aria-labelledby="about-heading">
+    <section class="section feature ground-paper" id="nody-bot" aria-labelledby="nb-heading">
+      <div class="wrap">
+        <div class="feature__panel ground-dark-2">
+          <div class="feature__main">
+            <p class="reading feature__kicker">Our first product</p>
+            <h2 class="feature__title" id="nb-heading"><img src="assets/nody-bot-lockup-transparent.png" width="1080" height="220" alt="Nody Bot" /></h2>
+            <p class="feature__lede">Battery-powered Ethernet phone-home for datacenter construction.</p>
+          </div>
+          <div class="feature__side">
+            <p>Hang it on the far end of a cable run. It sleeps for most of the build, wakes on a schedule, and reports in so you know the drop is still alive. No PoE, and nothing left pingable.</p>
+            <div class="actions">
+              <a class="btn btn--primary btn--lg" href="nody-bot.html">Explore Nody Bot {ARROW}</a>
+              <a class="text-link" href="nody-bot.html#specs">View specifications {ARROW}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section ground-paper-2" id="company" aria-labelledby="about-heading">
       <div class="wrap split">
         <div class="split__copy">
           <h2 class="h2" id="about-heading">A focused hardware company for practical industrial products.</h2>
@@ -364,7 +383,7 @@ def index():
       </div>
     </section>
 
-    <section class="section ground-paper-2" id="capabilities" aria-labelledby="cap-heading">
+    <section class="section ground-paper" id="capabilities" aria-labelledby="cap-heading">
       <div class="wrap caps">
         <div class="caps__head">
           <h2 class="h2" id="cap-heading">What we build.</h2>
@@ -386,25 +405,12 @@ def index():
       </div>
     </section>
 
-    <section class="section section--tight ground-paper" id="nody-bot" aria-labelledby="nb-heading">
-      <div class="wrap teaser">
-        <div class="teaser__copy">
-          <p class="reading teaser__kicker">Our first product</p>
-          <h2 class="h2" id="nb-heading">Nody Bot</h2>
-          <p class="lede">Battery-powered Ethernet phone-home for datacenter construction.</p>
-        </div>
-        <div class="teaser__action">
-          <a class="btn btn--primary" href="nody-bot.html">Explore Nody Bot {ARROW}</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--tight ground-dark" id="people" aria-labelledby="people-heading">
+    <section class="section section--tight ground-paper-2" id="people" aria-labelledby="people-heading">
       <div class="wrap teaser">
         <div class="teaser__copy">
           <p class="reading teaser__kicker">About</p>
           <h2 class="h2" id="people-heading">The people behind ESSIMPLEX.</h2>
-          <p class="lede on-dark-2 muted">Meet co-founders Frank Wagner and Henry Wagner.</p>
+          <p class="lede muted">Meet co-founders Frank Wagner and Henry Wagner.</p>
         </div>
         <div class="teaser__action">
           <a class="btn btn--ghost" href="about.html">About ESSIMPLEX {ARROW}</a>
@@ -418,7 +424,7 @@ def index():
     return head(t, d) + body
 
 def product():
-    nav = [("Nody Bot", "nody-bot.html", True), ("How it works", "#how", False), ("Specifications", "#specs", False), ("Company", "index.html#company", False), ("About", "about.html", False)]
+    nav = [("Nody Bot", "nody-bot.html", True), ("How it works", "#how", False), ("Specifications", "#specs", False), ("About", "about.html", False)]
     t = "Nody Bot | ESSIMPLEX"
     d = "Nody Bot is battery-powered Ethernet phone-home for datacenter construction. It sleeps, wakes on a schedule, and reports in so you know the cable drop is still alive."
     why = [
@@ -543,7 +549,7 @@ def product():
     return head(t, d, "https://essimplex.com/nody-bot.html") + body
 
 def legal(title, meta, intro, sections):
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False), ("About", "about.html", False)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("About", "about.html", False)]
     secs = "".join(f"\n        <h2>{h}</h2>\n        <p>{p}</p>" for h, p in sections)
     body = f'''<body class="page-legal">
 {header(nav, MAIL)}
@@ -590,7 +596,7 @@ def person(name, title, slug):
 '''
 
 def about():
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False), ("About", "about.html", True)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("About", "about.html", True)]
     people = "".join(person(*p) for p in PEOPLE)
     body = f'''<body class="page-about">
 {header(nav, MAIL)}
