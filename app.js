@@ -1,11 +1,16 @@
 /* ESSIMPLEX site behaviour. Progressive enhancement only: every element is
-   readable and usable without this file. Motion is skipped under
-   prefers-reduced-motion; the trace is then simply fully drawn. */
+   readable and usable without this file (the check-in wire is then fully drawn).
+   Scroll-linked state works under prefers-reduced-motion too; only autoplay,
+   entrance motion and transitions are switched off (see styles.css). */
 (function () {
   "use strict";
 
-  var reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
   var wideMq = window.matchMedia("(min-width: 900px)");
+  /* older Android WebViews only have addListener */
+  var onChange = function (mq, fn) {
+    if (mq.addEventListener) mq.addEventListener("change", fn);
+    else if (mq.addListener) mq.addListener(fn);
+  };
 
   /* ---------- Menu (phone and tablet) ---------- */
   var header = document.getElementById("site-header");
@@ -31,7 +36,7 @@
     document.addEventListener("click", function (e) {
       if (toggle.getAttribute("aria-expanded") === "true" && header && !header.contains(e.target)) setOpen(false);
     });
-    wideMq.addEventListener("change", function (m) { if (m.matches) setOpen(false); });
+    onChange(wideMq, function () { if (wideMq.matches) setOpen(false); });
   }
 
   /* ---------- Hero wires: pause the travelling pulse while off screen ---------- */
@@ -42,7 +47,9 @@
     }).observe(hero);
   }
 
-  /* ---------- Check-in wire: drawn as the sequence scrolls ---------- */
+  /* ---------- Check-in wire: filled as the sequence scrolls ----------
+     Progress is read straight from the scroll position (no autoplay, no easing), so it is
+     also used when the system asks for reduced motion. Only transitions are switched off (CSS). */
   var seqs = Array.prototype.slice.call(document.querySelectorAll("[data-seq]"));
   if (!seqs.length) return;
 
@@ -52,13 +59,16 @@
       el: el,
       strip: el.querySelector(".seq__strip"),
       plot: el.querySelector("[data-trace]"),
+      clips: Array.prototype.slice.call(el.querySelectorAll(".seq-clip")),
       markers: Array.prototype.slice.call(el.querySelectorAll(".seq__marker")),
       steps: Array.prototype.slice.call(el.querySelectorAll(".seq__step"))
     };
   });
 
   var paint = function (it, x) {
-    it.plot.style.setProperty("--reveal", x.toFixed(4));
+    it.clips.forEach(function (r) {
+      r.setAttribute("width", String(100 + x * parseFloat(r.getAttribute("data-w"))));
+    });
     it.markers.forEach(function (m, i) {
       var on = x >= parseFloat(m.getAttribute("data-at")) - 0.015;
       m.classList.toggle("is-on", on);
@@ -85,34 +95,39 @@
     return clamp(xs[n - 1] + (1 - xs[n - 1]) * ((anchor - c[n - 1]) / 160), xs[n - 1], 1);
   };
 
-  var allOn = function () { items.forEach(function (it) { paint(it, 1); }); };
+  var root = document.documentElement;
+  var showAll = function () {
+    root.classList.remove("js-seq");
+    items.forEach(function (it) { paint(it, 1); });
+  };
   var ticking = false;
   var update = function () {
     ticking = false;
-    items.forEach(function (it) { paint(it, progress(it)); });
+    try {
+      items.forEach(function (it) { paint(it, progress(it)); });
+    } catch (e) {
+      /* anything unexpected: fall back to the readable, fully drawn graph */
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      showAll();
+    }
   };
-  var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  var onScroll = function () {
+    if (ticking) return;
+    ticking = true;
+    if (window.requestAnimationFrame) window.requestAnimationFrame(update); else update();
+  };
 
-  var active = false;
-  var setup = function () {
-    if (reduceMq.matches) {
-      if (active) {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
-        active = false;
-      }
-      document.documentElement.classList.remove("js-seq");
-      allOn();
-      return;
-    }
-    if (!active) {
-      document.documentElement.classList.add("js-seq");
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      active = true;
-    }
+  try {
+    root.classList.add("js-seq");
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("orientationchange", onScroll);
+    window.addEventListener("load", onScroll);
+    onChange(wideMq, onScroll);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(onScroll);
     update();
-  };
-  reduceMq.addEventListener("change", setup);
-  setup();
+  } catch (e) {
+    showAll();
+  }
 })();

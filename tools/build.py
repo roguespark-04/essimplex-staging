@@ -96,20 +96,23 @@ def seq_route(nodes, bend):
     return [(-40, y0), (x0 + a, y0), (x0 + a + s1, y1), (x1 + b2, y1), (x1 + b2 + s2, y2), (x2 + a, y2),
             (x2 + a + s2, y3), (x3 + b2, y3), (x3 + b2 + s1, y4), (x4 + 10, y4), (1040 if nodes is SEQ_W else 400, y4)]
 
+def clip_defs(cid, w):
+    # SVG clipPath (works in every browser that draws SVG); app.js sets the rect width as you scroll.
+    # Without JS the rect is wide enough to show the whole wire.
+    return f'<defs><clipPath id="{cid}"><rect class="seq-clip" data-w="{w}" x="-100" y="-100" width="1300" height="500"/></clipPath></defs>'
+
 def seq_svgs():
-    # narrow
     pn = seq_route(SEQ_N, (20, 16))
-    pn = [(x, y) for x, y in pn]
-    b, _ = bundle(pn, 3, 7, main_cls="t-main", other_cls="t-aux")
-    track_n = "".join(f'<path class="t-track" d="{d_of(offset_poly(pn, d) if d else pn)}"/>' for d in (-7, 0, 7))
-    main_n = f'<path class="t-line" d="{d_of(pn)}"/>'
     aux_n = "".join(f'<path class="t-aux" d="{d_of(offset_poly(pn, d))}"/>' for d in (-7, 7))
-    narrow = wires_svg("t-narrow", (360, 130), "xMidYMid meet", aux_n + track_n.replace('class="t-track"', 'class="t-track"') + main_n)
+    track_n = "".join(f'<path class="t-track" d="{d_of(offset_poly(pn, d) if d else pn)}"/>' for d in (-7, 0, 7))
+    narrow = wires_svg("t-narrow", (360, 130), "xMidYMid meet",
+                       clip_defs("seqclip-n", 360) + aux_n + track_n + f'<path class="t-line" clip-path="url(#seqclip-n)" d="{d_of(pn)}"/>')
     pw = seq_route(SEQ_W, (60, 60))
     aux_w = "".join(f'<path class="t-aux" d="{d_of(offset_poly(pw, d))}"/>' for d in (-10, 10))
     track_w = f'<path class="t-track" d="{d_of(pw)}"/>'
     drops = "".join(f'<path class="t-drop" d="M{x},{y + 16} V226"/>' for x, y in SEQ_W)
-    wide = wires_svg("t-wide", (1000, 240), "xMidYMid meet", drops + aux_w + track_w + f'<path class="t-line" d="{d_of(pw)}"/>')
+    wide = wires_svg("t-wide", (1000, 240), "xMidYMid meet",
+                     clip_defs("seqclip-w", 1000) + drops + aux_w + track_w + f'<path class="t-line" clip-path="url(#seqclip-w)" d="{d_of(pw)}"/>')
     return narrow + wide
 
 def seq_diagram(steps, compact):
@@ -235,7 +238,7 @@ FOOTER = '''  <footer class="site-footer ground-dark">
       </div>
       <div class="footer__bottom">
         <p>&copy; 2026 ESSIMPLEX. All rights reserved.</p>
-        <a class="text-link" href="#main">Back to top <svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style="rotate:-90deg"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="text-link" href="#main">Back to top <svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false" style="transform:rotate(-90deg)"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
   </footer>
