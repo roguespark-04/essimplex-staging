@@ -30,15 +30,31 @@ def offset_poly(pts, d):
 def d_of(pts):
     return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts)
 
-def bundle(pts, n, gap, main_cls="w-main", other_cls="w-line"):
-    """n parallel wires, the middle one is the bright main wire. Returns (svg markup, main path d)."""
-    out = ""
+def plen(pts):
+    return sum(math.hypot(x2 - x1, y2 - y1) for (x1, y1), (x2, y2) in zip(pts, pts[1:]))
+
+# Per-wire pulse timing: every wire gets its own duration and start delay, so the light
+# passes along the bundle at staggered times instead of in step. (seconds)
+PULSE_DUR = [7.4, 5.6, 8.8, 6.2, 9.6, 5.1, 7.9, 6.8]
+PULSE_DELAY = [1.6, 4.1, 0.8, 5.6, 2.9, 7.2, 3.4, 6.1]
+
+def bundle(pts, n, gap, main_cls="w-main", other_cls="w-line", pulses=True, po=1.0, salt=0):
+    """n parallel wires, the middle one is the bright main wire.
+    Returns (line markup, pulse markup, main path d). Each wire has a crisp pulse dash on a duplicate path."""
+    lines = ""
+    pls = ""
     mid = n // 2
     for i in range(n):
         d = (i - mid) * gap
         p = pts if d == 0 else offset_poly(pts, d)
-        out += f'<path class="{main_cls if i == mid else other_cls}" d="{d_of(p)}"/>'
-    return out, d_of(pts)
+        lines += f'<path class="{main_cls if i == mid else other_cls}" d="{d_of(p)}"/>'
+        if pulses:
+            k = (i + salt) % len(PULSE_DUR)
+            cls = "w-pulse" if i == mid else "w-pulse w-pulse--s"
+            end = -(plen(p) + 80)
+            pls += (f'<path class="{cls}" style="--end:{end:.0f};--po:{po};animation-duration:{PULSE_DUR[k]}s;'
+                    f'animation-delay:{PULSE_DELAY[k]}s" d="{d_of(p)}"/>')
+    return lines, pls, d_of(pts)
 
 def pad(x, y, r=5):
     return f'<circle class="w-pad" cx="{x}" cy="{y}" r="{r}"/>'
@@ -47,39 +63,39 @@ def wires_svg(cls, vb, par, body):
     w, h = vb
     return f'<svg class="{cls}" viewBox="0 0 {w} {h}" preserveAspectRatio="{par}" aria-hidden="true" focusable="false">{body}</svg>'
 
-def pulse(main_d, delay, cls="w-pulse"):
-    return f'<path class="{cls}" style="animation-delay:{delay}s" d="{main_d}"/>'
-
 # Hero wire routes. Each variant is drawn for its own size and scaled uniformly (never stretched),
-# so the 45-degree bends stay true on every screen.
+# so the 45-degree bends stay true on every screen. The hero main wire carries a node at each end:
+# a start node near the left edge and an end node near the right edge, inset so both stay on screen.
 def hero_wires(kind):
     parts = []
     if kind == "home":
-        # phone: below the text, short route
+        # phone: below the text, short route (box ratio = viewBox ratio, so the whole width is always visible)
         m = [(-60, 205), (120, 205), (210, 115), (470, 115)]
-        b, md = bundle(m, 5, 9)
-        parts.append(wires_svg("w-narrow", (400, 240), "xMidYMid slice", b + pad(300, 115, 4) + pad(360, 115, 4) + pulse(md, 1.6)))
+        l, p, _ = bundle(m, 5, 9, salt=0)
+        parts.append(wires_svg("w-narrow", (400, 240), "xMidYMid slice", l + p + pad(24, 205, 5) + pad(376, 115, 5)))
         # tablet and small laptop: below the text, full-width route
         m = [(-100, 185), (430, 185), (540, 75), (1300, 75)]
-        b, md = bundle(m, 5, 12)
-        parts.append(wires_svg("w-mid", (1200, 230), "xMidYMid slice", b + pad(900, 75) + pad(1040, 75) + pulse(md, 1.6)))
-        # desktop: rises on the right, clear of the headline column
+        l, p, _ = bundle(m, 5, 12, salt=1)
+        parts.append(wires_svg("w-mid", (1200, 230), "xMidYMid slice", l + p + pad(40, 185, 7) + pad(1160, 75, 7)))
+        # desktop: rises on the right, clear of the headline column. The start node sits in its own
+        # left-anchored layer (same scale and vertical anchor) so it stays at the left edge at any width.
         m = [(-300, 470), (650, 470), (950, 170), (1900, 170)]
-        b, md = bundle(m, 5, 14)
+        l, p, _ = bundle(m, 5, 14, salt=0)
         f = [(1900, 64), (1262, 64), (1198, 0), (1198, -400)]
-        fb, _ = bundle(f, 3, 12, other_cls="w-line w-faint", main_cls="w-line w-faint")
-        parts.append(wires_svg("w-wide", (1440, 520), "xMaxYMax slice", fb + b + pad(1130, 170) + pad(1330, 170) + pulse(md, 1.6) + pulse(md, 4.6)))
+        fl, fp, _ = bundle(f, 3, 12, other_cls="w-line w-faint", main_cls="w-line w-faint", po=0.5, salt=5)
+        parts.append(wires_svg("w-wide", (1440, 520), "xMaxYMax slice", fl + l + fp + p + pad(1410, 170, 6)))
+        parts.append(wires_svg("w-wide w-wide--l", (1440, 520), "xMinYMax slice", pad(30, 470, 6)))
     else:
         m = [(-60, 100), (120, 100), (160, 60), (470, 60)]
-        b, md = bundle(m, 4, 9)
-        parts.append(wires_svg("w-narrow", (400, 120), "xMidYMid slice", b + pad(330, 60, 4) + pulse(md, 1.6)))
+        l, p, _ = bundle(m, 4, 9, salt=3)
+        parts.append(wires_svg("w-narrow", (400, 120), "xMidYMid slice", l + p + pad(24, 100, 5) + pad(376, 60, 5)))
         m = [(-100, 120), (560, 120), (610, 70), (1300, 70)]
-        b, md = bundle(m, 5, 12)
-        parts.append(wires_svg("w-mid", (1200, 160), "xMidYMid slice", b + pad(980, 70) + pulse(md, 1.6)))
+        l, p, _ = bundle(m, 5, 12, salt=5)
+        parts.append(wires_svg("w-mid", (1200, 160), "xMidYMid slice", l + p + pad(40, 120, 7) + pad(1160, 70, 7)))
     return "".join(parts)
 
 def hero_trace(kind):
-    return f'''<div class="wires wires--{kind}" data-wires role="img" aria-label="Illustration: a bundle of parallel wires running from Nody Bot to your collector, with a short pulse of light travelling along one wire.">
+    return f'''<div class="wires wires--{kind}" data-wires role="img" aria-label="Illustration: a bundle of parallel wires running from Nody Bot to your collector, with short pulses of light travelling along the wires.">
         {hero_wires(kind)}
       </div>
       <div class="wrap">

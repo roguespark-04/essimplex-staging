@@ -268,17 +268,20 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
    drawing, scaled uniformly, so the bends never distort. Crisp strokes only. */
 .wires { position: relative; overflow: visible; color: var(--copper-bright); }
 .wires svg { display: none; width: 100%; height: 100%; overflow: visible; }
+.wires svg.w-wide--l { position: absolute; top: 0; left: 0; pointer-events: none; }
 .w-line { fill: none; stroke: var(--copper-bright); stroke-width: 1.25; opacity: 0.34; stroke-linejoin: miter; }
 .w-main { fill: none; stroke: var(--copper-bright); stroke-width: 2; stroke-linejoin: miter; }
 .w-faint { opacity: 0.16; }
-.w-pad { fill: var(--ink-950); stroke: var(--copper-soft); stroke-width: 2; }
+.w-pad { fill: var(--ink-950); stroke: var(--copper-soft); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .w-pulse { fill: none; stroke: #FAE5C3; stroke: oklch(0.93 0.05 80); stroke-width: 3; stroke-linecap: butt; stroke-dasharray: 70 6000; stroke-dashoffset: 70; opacity: 0;
   animation: wire-pulse 6s cubic-bezier(0.45, 0, 0.3, 1) infinite both; }
+.w-pulse--s { stroke-width: 2.25; }
+/* Each wire sets its own --end (path length), duration and delay inline, so pulses are staggered. */
 @keyframes wire-pulse {
   0% { stroke-dashoffset: 70; opacity: 0; }
-  4% { opacity: 1; }
-  52% { stroke-dashoffset: -2900; opacity: 1; }
-  56%, 100% { stroke-dashoffset: -2900; opacity: 0; }
+  4% { opacity: 1; opacity: var(--po, 1); }
+  50% { stroke-dashoffset: -2900; stroke-dashoffset: var(--end, -2900); opacity: 1; opacity: var(--po, 1); }
+  54%, 100% { stroke-dashoffset: -2900; stroke-dashoffset: var(--end, -2900); opacity: 0; }
 }
 .hero.is-off .w-pulse { animation-play-state: paused; }
 
@@ -306,13 +309,13 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
 .hero--home { min-height: calc(100vh - var(--header-h)); }
 @supports (height: 100svh) { .hero--home { min-height: calc(100svh - var(--header-h)); } }
 .wires--home, .wires--product { margin-top: var(--s-6); animation: wires-in var(--duration-trace) var(--ease-smooth-out) 150ms both; }
-.wires--home { height: 240px; }
-.wires--product { height: 120px; }
+.wires--home { height: auto; aspect-ratio: 400 / 240; }
+.wires--product { height: auto; aspect-ratio: 400 / 120; }
 .wires--home .w-narrow, .wires--product .w-narrow { display: block; }
 .wires-legend { max-width: none; display: flex; justify-content: space-between; gap: var(--s-4); padding-block: var(--s-3) var(--s-6); color: var(--on-dark-2); }
 .wires-legend span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--status); margin-right: var(--s-2); }
 @keyframes wires-in { from { clip-path: inset(-40px 100% -40px 0); } to { clip-path: inset(-40px 0 -40px 0); } }
-@media (min-width: 700px) {
+@media (min-width: 600px) {
   .wires--home { height: auto; aspect-ratio: 1200 / 230; max-height: 230px; }
   .wires--product { height: auto; aspect-ratio: 1200 / 160; max-height: 130px; }
   .wires--home .w-narrow, .wires--product .w-narrow { display: none; }
@@ -510,6 +513,9 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
 @supports not (aspect-ratio: 1) {
   .seq__plot::before { content: ""; display: block; padding-top: 36.11%; }
   @media (min-width: 900px) { .seq__plot::before { padding-top: 24%; } }
+  .wires--home { height: 240px; }
+  .wires--product { height: 120px; }
+  @media (min-width: 600px) { .wires--home { height: 200px; } .wires--product { height: 120px; } }
 }
 
 /* ---------- Reduced motion ----------
