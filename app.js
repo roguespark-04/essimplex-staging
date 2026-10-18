@@ -1,33 +1,19 @@
 /* ESSIMPLEX site behaviour. Progressive enhancement only: every element is
-   readable without this file. Motion respects prefers-reduced-motion and
-   only animates transform/opacity (counters update text). */
+   readable and usable without this file. Motion is skipped under
+   prefers-reduced-motion; the trace is then simply fully drawn. */
 (function () {
   "use strict";
 
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var hasIO = "IntersectionObserver" in window;
+  var reduceMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var wideMq = window.matchMedia("(min-width: 900px)");
 
-  /* ---------- Sticky header: solid once the page scrolls ---------- */
+  /* ---------- Menu (phone and tablet) ---------- */
   var header = document.getElementById("site-header");
-  if (header) {
-    var ticking = false;
-    var onScroll = function () {
-      header.classList.toggle("is-scrolled", window.scrollY > 24);
-      ticking = false;
-    };
-    window.addEventListener("scroll", function () {
-      if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
-    }, { passive: true });
-    onScroll();
-  }
-
-  /* ---------- Mobile navigation ---------- */
   var toggle = document.getElementById("nav-toggle");
   var nav = document.getElementById("primary-nav");
   if (toggle && nav) {
     var setOpen = function (open) {
       nav.classList.toggle("is-open", open);
-      if (header) header.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     };
     toggle.addEventListener("click", function () {
@@ -42,94 +28,83 @@
         toggle.focus();
       }
     });
-    window.matchMedia("(min-width: 881px)").addEventListener("change", function (m) {
-      if (m.matches) setOpen(false);
+    document.addEventListener("click", function (e) {
+      if (toggle.getAttribute("aria-expanded") === "true" && header && !header.contains(e.target)) setOpen(false);
     });
+    wideMq.addEventListener("change", function (m) { if (m.matches) setOpen(false); });
   }
 
-  /* ---------- Animated counters on fact stats ---------- */
-  var counters = Array.prototype.slice.call(document.querySelectorAll("[data-count]"));
-  var runCount = function (el) {
-    var target = parseFloat(el.getAttribute("data-count"));
-    var start = null;
-    var dur = 1300;
-    var step = function (t) {
-      if (start === null) start = t;
-      var p = Math.min(1, (t - start) / dur);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.round(target * eased));
-      if (p < 1) requestAnimationFrame(step);
+  /* ---------- Check-in trace: drawn as the sequence scrolls ---------- */
+  var seqs = Array.prototype.slice.call(document.querySelectorAll("[data-seq]"));
+  if (!seqs.length) return;
+
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var items = seqs.map(function (el) {
+    return {
+      el: el,
+      strip: el.querySelector(".seq__strip"),
+      plot: el.querySelector("[data-trace]"),
+      markers: Array.prototype.slice.call(el.querySelectorAll(".seq__marker")),
+      steps: Array.prototype.slice.call(el.querySelectorAll(".seq__step"))
     };
-    requestAnimationFrame(step);
+  });
+
+  var paint = function (it, x) {
+    it.plot.style.setProperty("--reveal", x.toFixed(4));
+    it.markers.forEach(function (m, i) {
+      var on = x >= parseFloat(m.getAttribute("data-at")) - 0.015;
+      m.classList.toggle("is-on", on);
+      if (it.steps[i]) it.steps[i].classList.toggle("is-on", on);
+    });
   };
 
-  /* ---------- Reveal on enter ---------- */
-  var revealables = document.querySelectorAll("[data-reveal]");
-  if (!hasIO || reduce) {
-    revealables.forEach(function (el) { el.classList.add("is-in"); });
-  } else {
-    var revealIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-in");
-          revealIO.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
-    revealables.forEach(function (el) { revealIO.observe(el); });
-
-    if (counters.length) {
-      counters.forEach(function (el) { el.textContent = "0"; });
-      var countIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            runCount(entry.target);
-            countIO.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.6 });
-      counters.forEach(function (el) { countIO.observe(el); });
+  var progress = function (it) {
+    var vh = window.innerHeight;
+    if (wideMq.matches) {
+      /* desktop: the whole plot is in view; draw it as it travels up the screen */
+      var r = it.plot.getBoundingClientRect();
+      return clamp((vh * 0.9 - r.top) / (r.height + vh * 0.45), 0, 1);
     }
-  }
-
-  /* ---------- Loops that only run while on screen ---------- */
-  var toggleOnView = function (selector, cls) {
-    var els = document.querySelectorAll(selector);
-    if (!hasIO || !els.length) return;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) { entry.target.classList.toggle(cls, entry.isIntersecting); });
-    });
-    els.forEach(function (el) { io.observe(el); });
+    /* phone/tablet: the strip is pinned under the header; the list scrolling past it drives the line */
+    var anchor = it.strip.getBoundingClientRect().bottom + 24;
+    var c = it.steps.map(function (s) { var b = s.getBoundingClientRect(); return b.top + Math.min(b.height, 120) / 2; });
+    var n = c.length;
+    var xs = it.markers.map(function (m) { return parseFloat(m.getAttribute("data-at")); });
+    if (anchor <= c[0]) return clamp(xs[0] * (1 - (c[0] - anchor) / 240), 0, xs[0]);
+    for (var i = 0; i < n - 1; i++) {
+      if (anchor <= c[i + 1]) return xs[i] + (xs[i + 1] - xs[i]) * ((anchor - c[i]) / (c[i + 1] - c[i]));
+    }
+    return clamp(xs[n - 1] + (1 - xs[n - 1]) * ((anchor - c[n - 1]) / 160), xs[n - 1], 1);
   };
-  toggleOnView(".diagram", "is-playing");
-  toggleOnView(".live", "is-live");
 
-  /* ---------- Nody Bot check-in sequence: steps advance as you scroll ---------- */
-  var how = document.querySelector(".how");
-  if (how && hasIO) {
-    var seq = how.querySelector(".seq");
-    var steps = Array.prototype.slice.call(how.querySelectorAll(".step"));
-    var nodes = Array.prototype.slice.call(how.querySelectorAll(".seq__node"));
-    var last = steps.length - 1;
-    var setStep = function (n) {
-      steps.forEach(function (s, i) {
-        s.classList.toggle("is-current", i === n);
-        s.classList.toggle("is-done", i < n);
-      });
-      nodes.forEach(function (d, i) {
-        d.classList.toggle("is-current", i === n);
-        d.classList.toggle("is-done", i <= n);
-      });
-      if (seq) seq.style.setProperty("--seq", n <= 0 ? 0 : n / last);
-    };
-    how.classList.add("is-stepping");
-    if (seq) seq.classList.add("is-stepping");
-    setStep(-1);
-    var stepIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) setStep(steps.indexOf(entry.target));
-      });
-    }, { rootMargin: "-42% 0px -42% 0px" });
-    steps.forEach(function (s) { stepIO.observe(s); });
-  }
+  var allOn = function () { items.forEach(function (it) { paint(it, 1); }); };
+  var ticking = false;
+  var update = function () {
+    ticking = false;
+    items.forEach(function (it) { paint(it, progress(it)); });
+  };
+  var onScroll = function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+
+  var active = false;
+  var setup = function () {
+    if (reduceMq.matches) {
+      if (active) {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+        active = false;
+      }
+      document.documentElement.classList.remove("js-seq");
+      allOn();
+      return;
+    }
+    if (!active) {
+      document.documentElement.classList.add("js-seq");
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      active = true;
+    }
+    update();
+  };
+  reduceMq.addEventListener("change", setup);
+  setup();
 })();
