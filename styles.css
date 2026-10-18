@@ -237,12 +237,32 @@ a:hover > .ico-arrow, a:hover .ico-arrow { translate: 3px 0; }
   .section-head--split { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-16); align-items: end; margin-bottom: var(--s-16); }
 }
 
-/* ---------- Trace (signature) ---------- */
+/* ---------- Wires (signature) ----------
+   Bundles of parallel copper wires with 45-degree bends. Each size has its own
+   drawing, scaled uniformly, so the bends never distort. Crisp strokes only. */
+.wires { position: relative; overflow: visible; color: var(--copper-bright); }
+.wires svg { display: none; width: 100%; height: 100%; overflow: visible; }
+.w-line { fill: none; stroke: var(--copper-bright); stroke-width: 1.25; opacity: 0.34; stroke-linejoin: miter; }
+.w-main { fill: none; stroke: var(--copper-bright); stroke-width: 2; stroke-linejoin: miter; }
+.w-faint { opacity: 0.16; }
+.w-pad { fill: var(--ink-950); stroke: var(--copper-soft); stroke-width: 2; }
+.w-pulse { fill: none; stroke: oklch(0.93 0.05 80); stroke-width: 3; stroke-linecap: butt; stroke-dasharray: 70 6000; stroke-dashoffset: 70; opacity: 0;
+  animation: wire-pulse 6s cubic-bezier(0.45, 0, 0.3, 1) infinite both; }
+@keyframes wire-pulse {
+  0% { stroke-dashoffset: 70; opacity: 0; }
+  4% { opacity: 1; }
+  52% { stroke-dashoffset: -2900; opacity: 1; }
+  56%, 100% { stroke-dashoffset: -2900; opacity: 0; }
+}
+.hero.is-off .w-pulse { animation-play-state: paused; }
+
+/* check-in sequence wire */
 .trace { position: relative; --reveal: 1; }
 .trace svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.trace .t-track { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: 0.32; vector-effect: non-scaling-stroke; }
-.trace .t-line { fill: none; stroke: var(--copper-bright); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke;
-  clip-path: inset(-20px calc((1 - var(--reveal)) * 100%) -20px 0); }
+.trace .t-track { fill: none; stroke: var(--copper-bright); stroke-width: 1.5; opacity: 0.3; stroke-linejoin: miter; }
+.trace .t-aux { fill: none; stroke: var(--copper-bright); stroke-width: 1.25; opacity: 0.2; stroke-linejoin: miter; }
+.trace .t-drop { fill: none; stroke: var(--rule-dark); stroke-width: 1; }
+.trace .t-line { fill: none; stroke: var(--copper-bright); stroke-width: 2.5; stroke-linejoin: miter; clip-path: inset(-20px calc((1 - var(--reveal)) * 100%) -20px 0); }
 .trace .t-narrow { display: block; }
 .trace .t-wide { display: none; }
 @media (min-width: 900px) { .trace .t-narrow { display: none; } .trace .t-wide { display: block; } }
@@ -258,19 +278,32 @@ a:hover > .ico-arrow, a:hover .ico-arrow { translate: 3px 0; }
 .hero__copy { max-width: none; }
 .hero .display { max-width: 13ch; }
 .hero--home { min-height: calc(100svh - var(--header-h)); }
-.hero-trace { height: 120px; color: var(--on-dark); margin-top: var(--s-4); }
-.hero-trace__legend { max-width: none; display: flex; justify-content: space-between; gap: var(--s-4); padding-block: var(--s-3) var(--s-6); color: var(--on-dark-2); }
-.hero-trace__legend span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--status); margin-right: var(--s-2); vertical-align: 0; }
-.hero .trace .t-line { animation: trace-in var(--duration-trace) var(--ease-smooth-out) 200ms both; }
-@keyframes trace-in { from { clip-path: inset(-20px 100% -20px 0); } to { clip-path: inset(-20px 0 -20px 0); } }
+.wires--home, .wires--product { margin-top: var(--s-6); animation: wires-in var(--duration-trace) var(--ease-smooth-out) 150ms both; }
+.wires--home { height: 240px; }
+.wires--product { height: 120px; }
+.wires--home .w-narrow, .wires--product .w-narrow { display: block; }
+.wires-legend { max-width: none; display: flex; justify-content: space-between; gap: var(--s-4); padding-block: var(--s-3) var(--s-6); color: var(--on-dark-2); }
+.wires-legend span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--status); margin-right: var(--s-2); }
+@keyframes wires-in { from { clip-path: inset(-40px 100% -40px 0); } to { clip-path: inset(-40px 0 -40px 0); } }
+@media (min-width: 700px) {
+  .wires--home { height: auto; aspect-ratio: 1200 / 230; max-height: 230px; }
+  .wires--product { height: auto; aspect-ratio: 1200 / 160; max-height: 130px; }
+  .wires--home .w-narrow, .wires--product .w-narrow { display: none; }
+  .wires--home .w-mid, .wires--product .w-mid { display: block; }
+}
 @media (min-width: 900px) {
   .hero__content { position: relative; z-index: 1; padding-top: var(--s-20); padding-bottom: var(--s-12); }
   .hero--home { min-height: min(calc(100svh - var(--header-h)), 820px); }
   .hero .display { max-width: 16ch; }
-  .hero-trace { height: 340px; margin-top: -170px; pointer-events: none; }
-  .hero-trace__legend { padding-bottom: var(--s-8); }
+  .wires-legend { padding-bottom: var(--s-8); }
 }
-.hero--product .hero-trace { height: 120px; margin-top: var(--s-6); }
+@media (min-width: 1200px) {
+  /* desktop: the bundle rises on the right, behind and clear of the text column */
+  .hero--home .wires--home { position: absolute; left: 0; right: 0; bottom: 72px; height: 520px; aspect-ratio: auto; max-height: none; margin-top: 0; pointer-events: none; }
+  .hero--home .wires--home .w-mid { display: none; }
+  .hero--home .wires--home .w-wide { display: block; }
+  .hero--home .wires-legend { position: relative; }
+}
 .hero--product .hero__grid { display: grid; gap: var(--s-8); }
 @media (min-width: 900px) { .hero--product .hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-16); align-items: center; } }
 .breadcrumb { display: flex; gap: var(--s-2); align-items: center; font-size: var(--fs-small); color: var(--on-dark-2); min-height: 44px; }
@@ -318,9 +351,9 @@ a:hover > .ico-arrow, a:hover .ico-arrow { translate: 3px 0; }
 /* ---------- Sequence (check-in diagram) ---------- */
 .seq { position: relative; }
 .seq__strip { position: sticky; top: var(--header-h); z-index: 5; background: var(--ink-900); padding-block: var(--s-4) var(--s-3); margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); box-shadow: 0 1px 0 var(--rule-dark); }
-.seq__plot { --ph: 112px; position: relative; height: var(--ph); color: var(--on-dark); margin-inline: 14px; }
+.seq__plot { position: relative; aspect-ratio: 360 / 130; max-width: 560px; color: var(--on-dark); }
 .seq__marker {
-  position: absolute; left: var(--x); top: calc(var(--yn) * 100%); translate: -50% -50%;
+  position: absolute; left: var(--x); top: calc(var(--yn) * 100%); translate: -50% -50%; z-index: 1;
   width: 28px; height: 28px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--ink-900); color: var(--copper-bright); box-shadow: inset 0 0 0 1.5px var(--copper-bright);
@@ -343,9 +376,9 @@ a:hover > .ico-arrow, a:hover .ico-arrow { translate: 3px 0; }
 
 @media (min-width: 900px) {
   .seq__strip { position: static; background: none; margin-inline: 0; padding-inline: 0; padding-block: 0; box-shadow: none; }
-  .seq__plot { --ph: 240px; margin-inline: 0; }
+  .seq__plot { aspect-ratio: 1000 / 240; max-width: none; }
   .seq__marker { width: 32px; height: 32px; font-size: 0.8125rem; }
-  .seq__marker::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: calc((1 - var(--yn)) * var(--ph) - 16px); background: var(--rule-dark); translate: -0.5px 0; }
+  .seq__marker { top: calc(var(--ynw) * 100%); }
   .seq__axis { margin-top: var(--s-4); }
   .seq__steps { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: var(--s-6); }
   .seq__step { display: block; padding: var(--s-6) var(--s-5) 0 0; box-shadow: 0 -1px 0 var(--copper-bright); }
@@ -447,7 +480,8 @@ a:hover > .ico-arrow, a:hover .ico-arrow { translate: 3px 0; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hero .trace .t-line { animation: none; }
+  .wires--home, .wires--product { animation: none; }
+  .w-pulse { display: none; }
   .btn, .nav-toggle__bars, .nav-toggle__bars::before { transition-duration: 0.01ms; }
   .btn:active { scale: 1; }
   .js .nav, .js .nav.is-open { transition-property: opacity, visibility; transform: none; }

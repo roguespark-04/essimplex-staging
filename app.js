@@ -34,7 +34,15 @@
     wideMq.addEventListener("change", function (m) { if (m.matches) setOpen(false); });
   }
 
-  /* ---------- Check-in trace: drawn as the sequence scrolls ---------- */
+  /* ---------- Hero wires: pause the travelling pulse while off screen ---------- */
+  var hero = document.querySelector(".hero");
+  if (hero && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      hero.classList.toggle("is-off", !entries[0].isIntersecting);
+    }).observe(hero);
+  }
+
+  /* ---------- Check-in wire: drawn as the sequence scrolls ---------- */
   var seqs = Array.prototype.slice.call(document.querySelectorAll("[data-seq]"));
   if (!seqs.length) return;
 

@@ -9,49 +9,113 @@ MAIL_NB = "mailto:support@essimplex.com?subject=Nody%20Bot%20inquiry"
 MAIL_DS = "mailto:support@essimplex.com?subject=Nody%20Bot%20datasheet%20request"
 ARROW = '<svg class="ico-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
-# ---------- trace geometry ----------
-def path(points, W, H):
-    return "M" + " L".join(f"{x*W:.1f},{y*H:.1f}" for x, y in points)
+# ---------- wire geometry ----------
+import math
 
-def pulse(x0, base, pw, W, H, top=0.10, low=0.98):
-    """One heartbeat-style pulse starting at fraction x0, pw is the width in viewBox units."""
-    u = pw / W
-    pts = [(x0, base), (x0 + .09*u, base - .14), (x0 + .18*u, base), (x0 + .30*u, base), (x0 + .38*u, base + .14),
-           (x0 + .46*u, top), (x0 + .56*u, low), (x0 + .64*u, base), (x0 + .80*u, base - .20), (x0 + .96*u, base), (x0 + u, base)]
-    return pts
+def offset_poly(pts, d):
+    """Parallel copy of a polyline at distance d (mitered joins), so 45-degree bends stay crisp."""
+    segs = []
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+        L = math.hypot(x2 - x1, y2 - y1)
+        segs.append(((x2 - x1) / L, (y2 - y1) / L))
+    norms = [(dy, -dx) for dx, dy in segs]
+    out = [(pts[0][0] + norms[0][0] * d, pts[0][1] + norms[0][1] * d)]
+    for i in range(1, len(pts) - 1):
+        n1, n2 = norms[i - 1], norms[i]
+        k = d / (1 + n1[0] * n2[0] + n1[1] * n2[1])
+        out.append((pts[i][0] + (n1[0] + n2[0]) * k, pts[i][1] + (n1[1] + n2[1]) * k))
+    out.append((pts[-1][0] + norms[-1][0] * d, pts[-1][1] + norms[-1][1] * d))
+    return out
 
-def hero_path(W, H, starts, pw):
-    base = 0.78
-    pts = [(0, base)]
-    for s in starts:
-        pts += pulse(s, base, pw, W, H)
-    pts.append((1, base))
-    return path(pts, W, H)
+def d_of(pts):
+    return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts)
 
-SEQ_PTS = [(0,.82),(.055,.82),(.10,.62),(.19,.62),(.23,.56),(.30,.46),(.38,.46),(.44,.44),(.47,.30),(.50,.08),(.53,.70),
-           (.56,.46),(.62,.46),(.66,.46),(.70,.30),(.74,.52),(.80,.58),(.86,.82),(1,.82)]
-NODES = [(.10,.62),(.30,.46),(.50,.08),(.70,.30),(.90,.82)]
+def bundle(pts, n, gap, main_cls="w-main", other_cls="w-line"):
+    """n parallel wires, the middle one is the bright main wire. Returns (svg markup, main path d)."""
+    out = ""
+    mid = n // 2
+    for i in range(n):
+        d = (i - mid) * gap
+        p = pts if d == 0 else offset_poly(pts, d)
+        out += f'<path class="{main_cls if i == mid else other_cls}" d="{d_of(p)}"/>'
+    return out, d_of(pts)
 
-def trace_svgs(d_narrow, wn, hn, d_wide, ww, hw):
-    return (f'<svg class="t-narrow" viewBox="0 0 {wn} {hn}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="t-track" d="{d_narrow}"/><path class="t-line" d="{d_narrow}"/></svg>'
-            f'<svg class="t-wide" viewBox="0 0 {ww} {hw}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="t-track" d="{d_wide}"/><path class="t-line" d="{d_wide}"/></svg>')
+def pad(x, y, r=5):
+    return f'<circle class="w-pad" cx="{x}" cy="{y}" r="{r}"/>'
 
-def hero_trace(label_right):
-    d_n = hero_path(400, 120, [0.22, 0.62], 112)
-    d_w = hero_path(1200, 340, [0.55, 0.78], 170)
-    return f'''<div class="trace hero-trace" role="img" aria-label="Sample check-in trace: a flat line while the unit sleeps, with a short pulse each time it checks in.">
-        {trace_svgs(d_n, 400, 120, d_w, 1200, 340)}
+def wires_svg(cls, vb, par, body):
+    w, h = vb
+    return f'<svg class="{cls}" viewBox="0 0 {w} {h}" preserveAspectRatio="{par}" aria-hidden="true" focusable="false">{body}</svg>'
+
+def pulse(main_d, delay, cls="w-pulse"):
+    return f'<path class="{cls}" style="animation-delay:{delay}s" d="{main_d}"/>'
+
+# Hero wire routes. Each variant is drawn for its own size and scaled uniformly (never stretched),
+# so the 45-degree bends stay true on every screen.
+def hero_wires(kind):
+    parts = []
+    if kind == "home":
+        # phone: below the text, short route
+        m = [(-60, 205), (120, 205), (210, 115), (470, 115)]
+        b, md = bundle(m, 5, 9)
+        parts.append(wires_svg("w-narrow", (400, 240), "xMidYMid slice", b + pad(300, 115, 4) + pad(360, 115, 4) + pulse(md, 1.6)))
+        # tablet and small laptop: below the text, full-width route
+        m = [(-100, 185), (430, 185), (540, 75), (1300, 75)]
+        b, md = bundle(m, 5, 12)
+        parts.append(wires_svg("w-mid", (1200, 230), "xMidYMid slice", b + pad(900, 75) + pad(1040, 75) + pulse(md, 1.6)))
+        # desktop: rises on the right, clear of the headline column
+        m = [(-300, 470), (650, 470), (950, 170), (1900, 170)]
+        b, md = bundle(m, 5, 14)
+        f = [(1900, 64), (1262, 64), (1198, 0), (1198, -400)]
+        fb, _ = bundle(f, 3, 12, other_cls="w-line w-faint", main_cls="w-line w-faint")
+        parts.append(wires_svg("w-wide", (1440, 520), "xMaxYMax slice", fb + b + pad(1130, 170) + pad(1330, 170) + pulse(md, 1.6) + pulse(md, 4.6)))
+    else:
+        m = [(-60, 100), (120, 100), (160, 60), (470, 60)]
+        b, md = bundle(m, 4, 9)
+        parts.append(wires_svg("w-narrow", (400, 120), "xMidYMid slice", b + pad(330, 60, 4) + pulse(md, 1.6)))
+        m = [(-100, 120), (560, 120), (610, 70), (1300, 70)]
+        b, md = bundle(m, 5, 12)
+        parts.append(wires_svg("w-mid", (1200, 160), "xMidYMid slice", b + pad(980, 70) + pulse(md, 1.6)))
+    return "".join(parts)
+
+def hero_trace(kind):
+    return f'''<div class="wires wires--{kind}" data-wires role="img" aria-label="Illustration: a bundle of parallel wires running from Nody Bot to your collector, with a short pulse of light travelling along one wire.">
+        {hero_wires(kind)}
       </div>
       <div class="wrap">
-        <p class="hero-trace__legend reading" aria-hidden="true"><span>Sample trace</span><span>{label_right}</span></p>
+        <p class="wires-legend reading" aria-hidden="true"><span>Nody Bot</span><span>Your collector</span></p>
       </div>'''
 
+# Check-in sequence route: one wire, a junction pad per step.
+SEQ_N = [(36, 105), (108, 78), (180, 42), (252, 78), (324, 105)]      # 360 x 130
+SEQ_W = [(100, 190), (300, 140), (500, 70), (700, 140), (900, 190)]   # 1000 x 240
+def seq_route(nodes, bend):
+    (x0, y0), (x1, y1), (x2, y2), (x3, y3), (x4, y4) = nodes
+    s1 = abs(y0 - y1); s2 = abs(y1 - y2)
+    a, b2 = bend
+    return [(-40, y0), (x0 + a, y0), (x0 + a + s1, y1), (x1 + b2, y1), (x1 + b2 + s2, y2), (x2 + a, y2),
+            (x2 + a + s2, y3), (x3 + b2, y3), (x3 + b2 + s1, y4), (x4 + 10, y4), (1040 if nodes is SEQ_W else 400, y4)]
+
+def seq_svgs():
+    # narrow
+    pn = seq_route(SEQ_N, (20, 16))
+    pn = [(x, y) for x, y in pn]
+    b, _ = bundle(pn, 3, 7, main_cls="t-main", other_cls="t-aux")
+    track_n = "".join(f'<path class="t-track" d="{d_of(offset_poly(pn, d) if d else pn)}"/>' for d in (-7, 0, 7))
+    main_n = f'<path class="t-line" d="{d_of(pn)}"/>'
+    aux_n = "".join(f'<path class="t-aux" d="{d_of(offset_poly(pn, d))}"/>' for d in (-7, 7))
+    narrow = wires_svg("t-narrow", (360, 130), "xMidYMid meet", aux_n + track_n.replace('class="t-track"', 'class="t-track"') + main_n)
+    pw = seq_route(SEQ_W, (60, 60))
+    aux_w = "".join(f'<path class="t-aux" d="{d_of(offset_poly(pw, d))}"/>' for d in (-10, 10))
+    track_w = f'<path class="t-track" d="{d_of(pw)}"/>'
+    drops = "".join(f'<path class="t-drop" d="M{x},{y + 16} V226"/>' for x, y in SEQ_W)
+    wide = wires_svg("t-wide", (1000, 240), "xMidYMid meet", drops + aux_w + track_w + f'<path class="t-line" d="{d_of(pw)}"/>')
+    return narrow + wide
+
 def seq_diagram(steps, compact):
-    d_n = path(SEQ_PTS, 360, 112)
-    d_w = path(SEQ_PTS, 1000, 240)
     markers = "".join(
-        f'<span class="seq__marker" data-at="{x:.2f}" style="--x:{x*100:.0f}%;--yn:{y}" aria-hidden="true">{i+1}</span>'
-        for i, (x, y) in enumerate(NODES))
+        f'<span class="seq__marker" data-at="{xn/360:.3f}" style="--x:{xn/360*100:.2f}%;--yn:{yn/130:.4f};--ynw:{yw/240:.4f}" aria-hidden="true">{i+1}</span>'
+        for i, ((xn, yn), (xw, yw)) in enumerate(zip(SEQ_N, SEQ_W)))
     items = ""
     for i, (title, text, note) in enumerate(steps):
         items += f'''
@@ -64,11 +128,11 @@ def seq_diagram(steps, compact):
     cls = "seq seq--compact" if compact else "seq"
     return f'''<div class="{cls}" data-seq>
         <div class="seq__strip">
-          <div class="seq__plot trace" data-trace role="img" aria-label="Check-in sequence as a trace over time: flat while asleep, rising through wake and connect, peaking at report, a smaller pulse at confirm, then flat again at sleep.">
-            {trace_svgs(d_n, 360, 112, d_w, 1000, 240)}
+          <div class="seq__plot trace" data-trace role="img" aria-label="Check-in route as a single wire with five junctions: wake, connect, report, confirm, sleep. The wire lights up as you scroll.">
+            {seq_svgs()}
             {markers}
           </div>
-          <p class="seq__axis reading" aria-hidden="true"><span>T+0</span><span>next wake in ~15 min</span></p>
+          <p class="seq__axis reading" aria-hidden="true"><span>Wake</span><span>~15 min to next wake</span></p>
         </div>
         <ol class="seq__steps" role="list">{items}
         </ol>
@@ -251,7 +315,7 @@ def index():
           </div>
         </div>
       </div>
-      {hero_trace("every ~15 min")}
+      {hero_trace("home")}
     </section>
 
     <section class="section ground-paper" id="nody-bot" aria-labelledby="nb-heading">
@@ -345,7 +409,7 @@ def product():
           {plate(True, plate_rows, uid="glance-heading", title="At a glance")}
         </div>
       </div>
-      {hero_trace("every ~15 min")}
+      {hero_trace("product")}
     </section>
 
     <section class="section ground-dark-2" id="how" aria-labelledby="how-heading">
