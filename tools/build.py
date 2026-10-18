@@ -239,7 +239,7 @@ FOOTER = '''  <footer class="site-footer ground-dark">
             <h2>Company</h2>
             <ul>
               <li><a href="index.html#capabilities">Capabilities</a></li>
-              <li><a href="index.html#company">About</a></li>
+              <li><a href="about.html">About</a></li>
               <li><a href="index.html#contact">Contact</a></li>
             </ul>
           </nav>
@@ -309,7 +309,7 @@ SEQ_LONG = [
 
 # ---------- pages ----------
 def index():
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("How it works", "#how", False), ("Company", "#company", False)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "#capabilities", False), ("How it works", "#how", False), ("Company", "#company", False), ("About", "about.html", False)]
     t = "ESSIMPLEX | Custom design and hardware products for industry"
     d = "ESSIMPLEX designs and builds practical hardware for demanding environments. Our first product is Nody Bot, battery-powered Ethernet phone-home for datacenter construction."
     caps = [
@@ -397,7 +397,7 @@ def index():
     return head(t, d) + body
 
 def product():
-    nav = [("Nody Bot", "nody-bot.html", True), ("How it works", "#how", False), ("Specifications", "#specs", False), ("Company", "index.html#company", False)]
+    nav = [("Nody Bot", "nody-bot.html", True), ("How it works", "#how", False), ("Specifications", "#specs", False), ("Company", "index.html#company", False), ("About", "about.html", False)]
     t = "Nody Bot | ESSIMPLEX"
     d = "Nody Bot is battery-powered Ethernet phone-home for datacenter construction. It sleeps, wakes on a schedule, and reports in so you know the cable drop is still alive."
     why = [
@@ -522,7 +522,7 @@ def product():
     return head(t, d, "https://essimplex.com/nody-bot.html") + body
 
 def legal(title, meta, intro, sections):
-    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False)]
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False), ("About", "about.html", False)]
     secs = "".join(f"\n        <h2>{h}</h2>\n        <p>{p}</p>" for h, p in sections)
     body = f'''<body class="page-legal">
 {header(nav, MAIL)}
@@ -546,6 +546,50 @@ def legal(title, meta, intro, sections):
 {FOOTER}'''
     return head(f"{title} | ESSIMPLEX", f"{title} for ESSIMPLEX. Placeholder until the full document is published.") + body
 
+
+# ---------- About ----------
+PEOPLE = [
+    ("Frank Wagner", "Co-founder", "frank-wagner"),
+    ("Henry Wagner", "Co-founder", "henry-wagner"),
+]
+# Empty-state mark for a missing portrait: a plain head-and-shoulders outline, thin copper line.
+PORTRAIT_MARK = ('<svg viewBox="0 0 80 100" aria-hidden="true" focusable="false">'
+                 '<circle cx="40" cy="38" r="13"/><path d="M14 90 C14 66 26 58 40 58 C54 58 66 66 66 90"/></svg>')
+
+def person(name, title, slug):
+    # To add a photo: replace the whole <div class="person__photo person__photo--empty"> element with
+    #   <img class="person__photo" src="assets/team/{slug}.jpg" width="800" height="1000" alt="{name}" />
+    # To add the introduction: replace the INTRO comment with <p class="person__intro">...</p>
+    return f'''        <article class="person" aria-labelledby="{slug}-name">
+          <div class="person__photo person__photo--empty" role="img" aria-label="Photo of {name} &mdash; coming soon">{PORTRAIT_MARK}</div>
+          <h2 class="person__name" id="{slug}-name">{name}</h2>
+          <p class="person__title reading">{title}</p>
+          <!-- INTRO: paste introduction here (replace this comment with <p class="person__intro">...</p>) -->
+        </article>
+'''
+
+def about():
+    nav = [("Nody Bot", "nody-bot.html", False), ("Capabilities", "index.html#capabilities", False), ("Company", "index.html#company", False), ("About", "about.html", True)]
+    people = "".join(person(*p) for p in PEOPLE)
+    body = f'''<body class="page-about">
+{header(nav, MAIL)}
+  <main id="main">
+    <section class="page-head ground-dark" aria-labelledby="page-heading">
+      <div class="wrap">
+        <h1 class="display" id="page-heading">About ESSIMPLEX</h1>
+      </div>
+    </section>
+    <section class="about ground-paper" aria-label="Co-founders">
+      <div class="wrap">
+        <div class="people">
+{people}        </div>
+      </div>
+    </section>
+  </main>
+
+{FOOTER}'''
+    return head("About | ESSIMPLEX", "About ESSIMPLEX and its co-founders, Frank Wagner and Henry Wagner.", "https://essimplex.com/about.html") + body
+
 pages = {
     "index.html": index(),
     "nody-bot.html": product(),
@@ -553,6 +597,7 @@ pages = {
         "This page is a placeholder for the ESSIMPLEX privacy policy. When products such as Nody Bot ship commercially, this document will describe what information we collect, how it is used, and your choices.",
         [("Marketing site", "This static marketing site does not operate a backend that collects personal data from forms. Contact requests use standard email links."),
          ("Contact", 'For privacy questions, use the contact options on the <a href="index.html#contact">main site</a>. This policy will be replaced with a complete legal document before consumer or enterprise data processing begins.')]),
+    "about.html": about(),
     "terms.html": legal("Terms of Use", "Last updated September 14, 2026 &middot; Placeholder",
         "These terms are a placeholder for ESSIMPLEX website and product terms of use, including the Nody Bot product. A complete agreement will be published before commercial availability.",
         [("Website", "Content on this marketing site is provided for informational purposes and does not constitute a product warranty, offer, or service-level commitment. Product specifications may change."),

@@ -254,6 +254,14 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
     transition: transform var(--duration-fast) var(--ease-smooth-out); }
   .nav__list a:hover::after, .nav__list a[aria-current="page"]::after { transform: scaleX(1); }
   .nav__cta { min-height: 44px; }
+  .nav__list a { white-space: nowrap; }
+}
+/* five links at 900-1099px: tighten so the row never wraps or touches the brand */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .nav { gap: var(--s-4); }
+  .nav__list { gap: 0; }
+  .nav__list a { padding: 0 var(--s-2); font-size: 0.875rem; }
+  .nav__list a::after { left: var(--s-2); right: var(--s-2); }
 }
 
 /* ---------- Sections ---------- */
@@ -508,6 +516,25 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
   .footer__top { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-16); }
   .footer__cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+
+/* ---------- About ---------- */
+.about { padding-block: var(--s-12) var(--section); }
+.people { display: grid; gap: var(--s-12); max-width: 56rem; }
+.person { display: grid; align-content: start; gap: var(--s-2); }
+.person__photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; margin-bottom: var(--s-4); background: var(--ink-900); }
+.person__photo--empty { position: relative; display: flex; align-items: center; justify-content: center; color: var(--copper-bright);
+  box-shadow: inset 0 0 0 1px rgba(143, 100, 64, 0.55); }
+.person__photo--empty::before { content: ""; position: absolute; top: 12px; right: 12px; bottom: 12px; left: 12px; border: 1px solid rgba(143, 100, 64, 0.28); }
+.person__photo--empty svg { width: 28%; height: auto; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; opacity: 0.55; }
+.person__name { font-size: var(--fs-h2); font-weight: 650; font-stretch: 106%; line-height: 1.1; letter-spacing: -0.015em; }
+.person__title { color: var(--copper-ink); text-transform: uppercase; letter-spacing: 0.08em; }
+.person__intro { margin-top: var(--s-3); max-width: 36em; }
+@media (min-width: 700px) {
+  .about { padding-top: var(--s-16); }
+  .people { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-12); }
+}
+@supports not (aspect-ratio: 1) { .person__photo { height: 0; padding-top: 125%; } .person__photo--empty svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); } }
 
 /* ---------- Older browsers without aspect-ratio ---------- */
 @supports not (aspect-ratio: 1) {
