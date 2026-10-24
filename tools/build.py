@@ -152,6 +152,7 @@ def seq_diagram(steps, compact):
           </li>'''
     cls = "seq seq--compact" if compact else "seq"
     return f'''<div class="{cls}" data-seq>
+       <div class="seq__stage">
         <div class="seq__strip">
           <div class="seq__plot trace" data-trace role="img" aria-label="Check-in route as a single wire with five junctions: wake, connect, report, confirm, sleep. The wire lights up as you scroll.">
             {seq_svgs()}
@@ -161,6 +162,7 @@ def seq_diagram(steps, compact):
         </div>
         <ol class="seq__steps" role="list">{items}
         </ol>
+       </div>
       </div>'''
 
 # ---------- shared chrome ----------

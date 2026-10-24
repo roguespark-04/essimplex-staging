@@ -58,6 +58,7 @@
     return {
       el: el,
       strip: el.querySelector(".seq__strip"),
+      stage: el.querySelector(".seq__stage") || el,
       plot: el.querySelector("[data-trace]"),
       clips: Array.prototype.slice.call(el.querySelectorAll(".seq-clip")),
       markers: Array.prototype.slice.call(el.querySelectorAll(".seq__marker")),
@@ -66,6 +67,7 @@
   });
 
   var paint = function (it, x) {
+    var cur = -1;
     it.clips.forEach(function (r) {
       r.setAttribute("width", String(100 + x * parseFloat(r.getAttribute("data-w"))));
     });
@@ -73,15 +75,27 @@
       var on = x >= parseFloat(m.getAttribute("data-at")) - 0.015;
       m.classList.toggle("is-on", on);
       if (it.steps[i]) it.steps[i].classList.toggle("is-on", on);
+      if (on) cur = i;
     });
+    it.steps.forEach(function (s, i) { s.classList.toggle("is-current", i === cur); });
   };
 
   var progress = function (it) {
     var vh = window.innerHeight;
     if (wideMq.matches) {
-      /* desktop: the whole plot is in view; draw it as it travels up the screen */
-      var r = it.plot.getBoundingClientRect();
-      return clamp((vh * 0.9 - r.top) / (r.height + vh * 0.45), 0, 1);
+      /* desktop: the stage is pinned; progress comes from how far the section track has scrolled.
+         p 0..0.08 draws in to node 1, nodes 1..5 sit at p = 0.08 + 0.2*i, the tail finishes at 1. */
+      var r = it.el.getBoundingClientRect();
+      var top = parseFloat(getComputedStyle(it.stage).top) || 0;
+      var p = clamp((top - r.top) / Math.max(1, r.height - it.stage.offsetHeight), 0, 1);
+      var xs0 = it.markers.map(function (m) { return parseFloat(m.getAttribute("data-at")); });
+      var pts = [[0, 0]];
+      xs0.forEach(function (x, i) { pts.push([0.08 + 0.2 * i, x]); });
+      pts.push([1, 1]);
+      for (var k = 0; k < pts.length - 1; k++) {
+        if (p <= pts[k + 1][0]) return pts[k][1] + (pts[k + 1][1] - pts[k][1]) * ((p - pts[k][0]) / (pts[k + 1][0] - pts[k][0]));
+      }
+      return 1;
     }
     /* phone/tablet: the strip is pinned under the header; the list scrolling past it drives the line */
     var anchor = it.strip.getBoundingClientRect().bottom + 24;
