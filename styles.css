@@ -514,19 +514,22 @@ a:hover > .ico-arrow, a:hover .ico-arrow { transform: translateX(3px); }
 
 /* ---------- About ---------- */
 .about { padding-block: var(--s-12) var(--section); }
-.people { display: grid; gap: var(--s-12); max-width: 56rem; }
+.people { display: grid; gap: var(--s-12); max-width: 26rem; }
 .person { display: grid; align-content: start; gap: var(--s-2); }
 .person__photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; margin-bottom: var(--s-4); background: var(--ink-900); }
 .person__photo--empty { position: relative; display: flex; align-items: center; justify-content: center; color: var(--copper-bright);
   box-shadow: inset 0 0 0 1px rgba(143, 100, 64, 0.55); }
 .person__photo--empty::before { content: ""; position: absolute; top: 12px; right: 12px; bottom: 12px; left: 12px; border: 1px solid rgba(143, 100, 64, 0.28); }
 .person__photo--empty svg { width: 28%; height: auto; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; opacity: 0.55; }
-.person__name { font-size: var(--fs-h2); font-weight: 650; font-stretch: 106%; line-height: 1.1; letter-spacing: -0.015em; }
+.person__name { font-size: clamp(1.5rem, 0.95rem + 1.6vw, 2.5rem); font-weight: 650; font-stretch: 106%; line-height: 1.1; letter-spacing: -0.015em; }
 .person__title { color: var(--copper-ink); text-transform: uppercase; letter-spacing: 0.08em; }
 .person__intro { margin-top: var(--s-3); max-width: 36em; }
 @media (min-width: 700px) {
   .about { padding-top: var(--s-16); }
-  .people { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-12); }
+  .people { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); max-width: none; }
+}
+@media (min-width: 1100px) {
+  .people { gap: var(--s-10); }
 }
 @supports not (aspect-ratio: 1) { .person__photo { height: 0; padding-top: 125%; } .person__photo--empty svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); } }
 

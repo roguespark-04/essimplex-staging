@@ -410,7 +410,7 @@ def index():
         <div class="teaser__copy">
           <p class="reading teaser__kicker">About</p>
           <h2 class="h2" id="people-heading">The people behind ESSIMPLEX.</h2>
-          <p class="lede muted">Meet co-founders Frank Wagner and Henry Wagner.</p>
+          <p class="lede muted">Meet co-founders Frank Wagner, Henry Wagner and Matt Wagner.</p>
         </div>
         <div class="teaser__action">
           <a class="btn btn--ghost" href="about.html">About ESSIMPLEX {ARROW}</a>
@@ -578,6 +578,7 @@ def legal(title, meta, intro, sections):
 PEOPLE = [
     ("Frank Wagner", "Co-founder", "frank-wagner"),
     ("Henry Wagner", "Co-founder", "henry-wagner"),
+    ("Matt Wagner", "Co-founder", "matt-wagner"),
 ]
 # Empty-state mark for a missing portrait: a plain head-and-shoulders outline, thin copper line.
 PORTRAIT_MARK = ('<svg viewBox="0 0 80 100" aria-hidden="true" focusable="false">'
@@ -615,7 +616,7 @@ def about():
   </main>
 
 {FOOTER}'''
-    return head("About | ESSIMPLEX", "About ESSIMPLEX and its co-founders, Frank Wagner and Henry Wagner.", "https://essimplex.com/about.html") + body
+    return head("About | ESSIMPLEX", "About ESSIMPLEX and its co-founders, Frank Wagner, Henry Wagner and Matt Wagner.", "https://essimplex.com/about.html") + body
 
 pages = {
     "index.html": index(),
