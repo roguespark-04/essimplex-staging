@@ -284,15 +284,13 @@ a:hover > .ico-arrow { transform: translateX(3px); }
   background: transparent; color: inherit; cursor: pointer;
   font: 600 0.875rem/1 var(--font);
 }
-.nav-toggle__bars {
-  width: 18px; height: 12px; position: relative; display: block;
-}
-.nav-toggle__bars::before, .nav-toggle__bars::after {
-  content: ""; position: absolute; left: 0; right: 0; height: 1.5px;
-  background: currentColor; border-radius: 1px;
-}
-.nav-toggle__bars::before { top: 2px; box-shadow: 0 4px 0 currentColor; }
-.nav-toggle__bars::after { bottom: 2px; }
+.nav-toggle__bars { position: relative; display: block; flex: none; width: 20px; height: 2px; margin: 6px 0; border-radius: 1px; background: currentColor; transition: background-color var(--duration-quick, 150ms) ease-out; }
+.nav-toggle__bars::before, .nav-toggle__bars::after { content: ""; position: absolute; left: 0; width: 20px; height: 2px; border-radius: 1px; background: currentColor; transition: transform var(--duration-fast, 250ms) cubic-bezier(.22,1,.36,1); }
+.nav-toggle__bars::before { top: -6px; }
+.nav-toggle__bars::after { top: 6px; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars { background-color: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::before { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bars::after { transform: translateY(-6px) rotate(-45deg); }
 .nav {
   display: none;
   position: absolute; left: 0; right: 0; top: 100%;
@@ -791,7 +789,7 @@ a:hover > .ico-arrow { transform: translateX(3px); }
   display: grid; gap: var(--s-12);
 }
 @media (min-width: 700px) {
-  .people { grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
+  .people { grid-template-columns: repeat(2, 1fr); gap: var(--s-12); max-width: 46rem; }
 }
 .person { max-width: 22rem; }
 .person__photo {
